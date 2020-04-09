@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 
 namespace ISAPro
 {
@@ -32,7 +33,11 @@ namespace ISAPro
         //lab5
         private void Lab5_Click(object sender, EventArgs e)
         {
-            GenerateTxt1();
+            //do pomiaru czasu
+            Stopwatch stopWatch = new Stopwatch();
+            TimeSpan ts;
+            string elapsedTime;
+
             dataGridView1.Rows.Clear();
             double a = Convert.ToDouble(textBoxA.Text);
             double b = Convert.ToDouble(textBoxB.Text);
@@ -82,10 +87,13 @@ namespace ISAPro
             //do wyników ostatecznych
             List<double> resultXreal = new List<double>();
             List<double> resultFx = new List<double>();
-            List<int> resultOccurrence = new List<int>();
-            
+            List<double> resultOccurrence = new List<double>();
+
+            GenerateFileModul8(a, b, d, n, T, Pk, Pm);//Generowanie pliku do modulu 8
+
             int j = 0;
-            //int el = 0;
+            int el = 0;
+            int elitePoint = 0;
 
             Lab3 lab3 = new Lab3(dHelp.Length);
 
@@ -93,24 +101,42 @@ namespace ISAPro
 
             Lab4 lab4 = new Lab4();
 
+            stopWatch.Start();
+
             xreal = InitPopulation(a, b, n); //wygenerowanie populacji xReal
                      
             for (int z = 0; z < T; z++)
             {
                 fx = CalculateFunction(xreal); // wyliczenie funkcji f(x)
-                /*
-                //wyznaczanie elity
-                el = 0;
-                elitefx = fx.Max();
-                foreach(var elite in fx)
-                {                 
-                    if (fx.Max() == elite)
-                    {                 
-                        elitexreal = xreal[el];
-                        break;
+
+                if (elitefx > fx.Max())
+                {
+                    //wstawianie elity 
+                    elitePoint = random.Next(0, (int)n);
+                    fx[el] = elitefx;
+                    xreal3[el] = elitexreal;
+                }
+                else
+                {
+                    //generowanie elity
+                    el = 0;
+                    elitefx = fx.Max();
+                    foreach (var elite in fx)
+                    {
+                        if (fx.Max() == elite)
+                        {
+                            elitexreal = xreal[el];
+                            break;
+                        }
+                        el++;
                     }
-                    el++;
-                }*/
+                }
+
+                WriteGenerationForModul8(xreal, fx, elitexreal, z); //zapisywanie do pliku pokolenia
+
+                fxmin.Add(fx.Min());
+                fxmax.Add(fx.Max());
+                fxavg.Add(fx.Average());
 
                 gx = lab3.searchGx(fx, d);
                 px = lab3.countPx(gx);
@@ -124,13 +150,20 @@ namespace ISAPro
                 xreal2bin.Clear();
                 foreach (var item in xreal2int)    // wygenerowanie ciagu binarnego (xreal2int -> xreal2bin)
                 {
-                    xreal2bin.Add(convertFromAndToDecimal.convertTo(item, 2, l));
+                    //xreal2bin.Add(convertFromAndToDecimal.convertTo(item, 2, l));
+                    xreal2bin.Add(convertFromAndToDecimal.intToBinarty(item, l));
                 }
 
                 r = RandomNumber(n);
 
                 xParents = lab4.serachParets(xreal2bin, r, Pk);  //generowania pokolenia rodziców 
-
+                foreach(var item in xParents)
+                {
+                    if(item == "0")
+                    {
+                        Console.WriteLine("zero");
+                    }
+                }
                 Pc = lab4.searchSection(xParents, l);
 
                 children = lab4.doChildren(xParents, Pc);
@@ -160,24 +193,19 @@ namespace ISAPro
 
                 fx = CalculateFunction(xreal3); // wyliczenie funkcji f(x)
 
-                /*dodawanie elity do wyników
-                el = 0;
-                foreach (var elite in fx)
-                {
-                    if(elitefx > elite)
-                    {
-                        fx[el] = elitefx;
-                        xreal3[el] = elitexreal;
-                        break;
-                    }
-                    el++;
-                }*/
-
                 elitefxlist.Add(elitefx);
                 elitexreallist.Add(elitexreal);
 
                 xreal = xreal3;
             }
+
+            //czyszczenie serii dla wykresu, zeby dla kazdego nowego start generował od zera
+            chart1.Titles.Clear();
+            chart1.Series["FxMAX"].Points.Clear();
+            chart1.Series["FxAVG"].Points.Clear();
+            chart1.Series["FxMIN"].Points.Clear();
+            
+            Chart_Draw(fxmax, fxavg, fxmin, T);
 
             dict = countOccurrence(xreal3);
             
@@ -185,8 +213,7 @@ namespace ISAPro
             {
                 resultXreal.Add(item.Key);
         
-
-                resultOccurrence.Add((int)(((double)item.Value / (double)xreal.Count()) * 100));
+                resultOccurrence.Add((((double)item.Value / (double)xreal.Count()) * 100));
             }
 
             resultFx = CalculateFunction(resultXreal);
@@ -195,42 +222,107 @@ namespace ISAPro
             {
                 genTable.Add(new GenerateTable(i + 1, resultXreal[i], resultFx[i], resultOccurrence[i]));
             }
-
             dataGridView1.DataSource = genTable;
             dataGridView1.DataSource = generateTableBindingSource;
 
             ((CurrencyManager)BindingContext[genTable]).Refresh();
+
+            stopWatch.Stop();
+            ts = stopWatch.Elapsed;
+
+            // Format and display the TimeSpan value.
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                ts.Hours, ts.Minutes, ts.Seconds,
+                ts.Milliseconds / 10);
+            
+
+            //Generowanie pliku do modulu 9
+            GenerateFileModul9(a, b, d, n, T, Pk, Pm, fxmax, fxavg, fxmin, elapsedTime);
         }
 
+        //generujemy wykres
+        private void Chart_Draw(List<double> FxMax, List<double> FxAVG, List<double> FxMIN, int T)
+        {
+            int counter = 0;
+            chart1.Titles.Add("Historia");
+            foreach (var item in FxMax)
+            {
+                chart1.Series["FxMAX"].Points.AddXY((counter+1), item);
+                chart1.Series["FxAVG"].Points.AddXY((counter + 1), FxAVG[counter]);
+                chart1.Series["FxMIN"].Points.AddXY((counter + 1), FxMIN[counter]);
+                counter++;                               
+            }
+             
+        }
+        //generujemy plik do modulu 9
+        private void GenerateFileModul9(double a, double b, double d, double n, int T, double Pk, double Pm, List<double> fxmax, List<double> fxavg, List<double> fxmin, string runTime)
+        {
+            string fileName = "Modul9.txt";
 
-       /* public void GenerateTxt(double a, double b, double n, double Pk, double Pm, int T, List<double> xreal, List<double> fx)
+            string pathString = Path.Combine("", fileName);
+            int counter = 0;
+
+            if (File.Exists(pathString))
+            {
+                File.Delete(pathString);
+            }
+
+            using (StreamWriter file = new StreamWriter(pathString, true))
+            {
+
+                file.WriteLine("Parametry: " + "a = " + a + ", b = " + b + ", d = " + d + ", n = " + n + ", T = " + T + ", Pk = " + Pk + ", Pm = " + Pm);
+                file.WriteLine("Run time: " + runTime);
+                file.WriteLine("T \t fxmin \t\t\t\t fxavg \t\t\t\t fxmax");
+                
+                foreach (var item in fxmax)
+                {
+                    file.WriteLine((counter+1) + "  \t " + fxmin[counter] + " \t\t " + fxavg[counter] + " \t\t " + item);
+                    counter++;
+                }
+
+            }
+        }
+
+        //Generujemy plik do modulu 8
+        private void GenerateFileModul8(double a, double b, double d, double n, int T, double Pk, double Pm)
         {
-            string fileName = "Spis pokolen.txt";
-            string pathString = System.IO.Path.Combine("", fileName);
-        }*/
-        public void GenerateTxt1()
-        {
-            string fileName = "Spis pokolen.txt";
-            string test = Path.GetTempPath();
+            string fileName = "Modul8.txt";
 
             string pathString = Path.Combine("", fileName);
 
-            if (!File.Exists(pathString))
+            
+            if (File.Exists(pathString))
             {
-                //File.Create(pathString);
-                File.WriteAllText(pathString, "Inny tekst");
-
-                File.WriteAllText(pathString, "Drugi tesk");
+                File.Delete(pathString);               
             }
-            else
+            
+            using (StreamWriter file = new StreamWriter(pathString, true))
             {
-                Console.WriteLine("File \"{0}\" already exists.", fileName);
-                return;
-            }
-
+                file.WriteLine("Parametry: " + "a = " + a + ", b = " + b + ", d = " + d + ", n = " + n + ", T = " + T + ", Pk = " + Pk + ", Pm = " + Pm);
+            }       
         }
 
-        public Dictionary<double, int> countOccurrence(List<double> xreal)
+        //zapisujemy pokolenia do pliku z modulu 8
+        private void WriteGenerationForModul8(List<double> xreal, List<double> fx, double elite, int T)
+        {
+            string fileName = "Modul8.txt";
+
+            string pathString = Path.Combine("", fileName);
+            int counter = 0;
+            using (StreamWriter file = new StreamWriter(pathString, true))
+            {
+                file.WriteLine("Pokolenie = " + (T+1));
+                file.WriteLine("Lp \t xreal    \t fx");
+                foreach (var item in xreal)
+                {
+                    file.WriteLine((counter+1) + " \t " + item + "    \t " + fx[counter]);
+                    counter++;
+                }
+                file.WriteLine("Elita pokolenia = " + elite + "\n");
+            }
+        }
+
+        private Dictionary<double, int> countOccurrence(List<double> xreal)
         {
             var dict = new Dictionary<double, int>();
 
@@ -246,7 +338,7 @@ namespace ISAPro
         }
 
 
-        public List<double> InitPopulation(double a, double b, double n)
+        private List<double> InitPopulation(double a, double b, double n)
         {
 
             List<double> randomList = new List<double>(); // lista do wylosowanych liczb
@@ -258,7 +350,6 @@ namespace ISAPro
 
             foreach (var item in randomList)
             {
-                Console.WriteLine((item * (b - a) + a));
                 listOfPopulation.Add(Math.Round((item * (b - a) + a), dHelp.Length));//zaokroąglanie 
             }
 
@@ -266,7 +357,7 @@ namespace ISAPro
         }
 
         //funkcja losujaca liczby od 0-n
-        public List<double> RandomNumber(double n)
+        private List<double> RandomNumber(double n)
         {
            
             List<double> randomList = new List<double>();
@@ -284,7 +375,7 @@ namespace ISAPro
         }
 
         //obliczanie fx
-        public List<double> CalculateFunction(List<double> xreal1)
+        private List<double> CalculateFunction(List<double> xreal1)
         {
             List<double> fx = new List<double>();
             double function = 0;
@@ -297,7 +388,7 @@ namespace ISAPro
             return fx;
         }
 
-        public List<int> FromXrealToXint(List<double> xreal, double a, double b, double l)
+        private List<int> FromXrealToXint(List<double> xreal, double a, double b, double l)
         {
 
             List<int> xint = new List<int>();
@@ -310,7 +401,7 @@ namespace ISAPro
             return xint;
         }
 
-        public List<double> FromXintToXreal(List<int> xint1, double a, double b, double l)
+        private List<double> FromXintToXreal(List<int> xint1, double a, double b, double l)
         {
             List<double> xreal1 = new List<double>();
 
@@ -322,237 +413,6 @@ namespace ISAPro
             }
             return xreal1;
         }
-        /*
-        //lab4
-        private void lab4_Click(object sender, EventArgs e)
-        {
-            dataGridView1.Rows.Clear();
-
-            double a = Convert.ToDouble(textBoxA.Text);
-            double b = Convert.ToDouble(textBoxB.Text);
-            double d = Convert.ToDouble(textBoxD.Text);
-            string dHelp = textBoxD.Text.Split(',').Last();
-
-            double n = Convert.ToDouble(textBoxN.Text);
-            double l = Math.Ceiling(Math.Log(((1 / d) * (b - a) + 1), 2)); // obliczanie l czyli na ilu bitach się liczba zmiejsci
-
-            double Pk = Convert.ToDouble(textBoxPk.Text);
-            double Pm = Convert.ToDouble(textBoxPm.Text);
-
-            List<double> xreal = new List<double>();
-            List<double> fx = new List<double>();
-            List<double> gx = new List<double>();
-            List<double> px = new List<double>();
-            List<double> qx = new List<double>();
-            List<double> r = new List<double>();
-            List<double> xreal2 = new List<double>();
-
-
-            List<int> xreal2int = new List<int>();
-            List<string> xreal2bin = new List<string>();
-            List<string> xParents = new List<string>();
-            List<int> Pc = new List<int>();
-            List<string> children = new List<string>();
-            List<string> xbinChildren = new List<string>();
-  
-            List<List<int>> pointsMutation = new List<List<int>>();
-            List<string> pointsMut = new List<string>();
-            List<string> xbinMutation = new List<string>();
-
-            List<int> xreal3int = new List<int>();
-            List<double> xreal3 = new List<double>();
-            int time = 0;
-            int j = 0;
-            xreal = InitPopulation(a, b, n); //wygenerowanie populacji xReal
-            fx = CalculateFunction(xreal); // wyliczenie funkcji f(x)
-
-            Lab3 lab3 = new Lab3(dHelp.Length);
-
-            gx = lab3.searchGx(fx, d);
-            px = lab3.countPx(gx);
-            qx = lab3.countDx(px);
-            r = RandomNumber(n);
-            xreal2 = lab3.pickXreal(xreal, qx, r, n); // populacja po selekcji 
-
-            //4laby 
-            ConvertFromAndToDecimal convertFromAndToDecimal = new ConvertFromAndToDecimal();
-
-            xreal2int = FromXrealToXint(xreal2, a, b, l); //wygenerowanie xreal2int (xreal2 -> xint)
-            foreach (var item in xreal2int)    // wygenerowanie ciagu binarnego (xreal2int -> xreal2bin)
-            {
-                xreal2bin.Add(convertFromAndToDecimal.convertTo(item, 2, l));
-            }
-
-            r = RandomNumber(n);
-
-            Lab4 lab4 = new Lab4();
-
-            xParents = lab4.serachParets(xreal2bin, r, Pk);  //generowania pokolenia rodziców 
-
-            Pc = lab4.searchSection(xParents, l);
-
-            children = lab4.doChildren(xParents, Pc);
-            xbinChildren = lab4.doXbinChildren(children, xreal2bin);
-
-            Random rand = new Random();
-            foreach(var item in xbinChildren)
-            {
-                r = RandomNumber(l);
-                time = rand.Next(1, 10);
-                Thread.Sleep(time);
-                pointsMutation.Add(lab4.searchMutation(r, Pm, l));
-            }
-            string helpString = " ";
-            foreach (var item in pointsMutation)
-            {
-                helpString = " ";
-                foreach (var item1 in item)
-                {
-                    if(item1 != 0)
-                    {
-                        helpString = helpString + " " + item1;
-                    }
-                   
-                }
-                pointsMut.Add(helpString);
-            }
-
-            j = 0;
-
-            foreach(var item in xbinChildren)
-            {
-                xbinMutation.Add(lab4.doMutation(item, pointsMutation[j]));
-                j++;
-            }
-
-            foreach (var item in xbinMutation)    // wygenerowanie xint (xbin -> xint)
-            {
-                xreal3int.Add(convertFromAndToDecimal.convertFrom(item, 2));
-            }
-
-            xreal3 = FromXintToXreal(xreal3int, a, b, l); //wygenerowanie z xint1 do xreal1
-
-
-            fx = CalculateFunction(xreal3); // wyliczenie funkcji f(x)
-
-           
-            for (int i = 0; i < n; i++)
-            {
-
-                genTable.Add(new GenerateTable(i + 1, xreal2[i], xreal2bin[i], xParents[i], Pc[i], children[i], xbinChildren[i], pointsMut[i], xbinMutation[i], xreal3[i], fx[i]));
-                
-            }
-
-            dataGridView1.DataSource = genTable;
-            dataGridView1.DataSource = generateTableBindingSource;
-
-            ((CurrencyManager)BindingContext[genTable]).Refresh();
-        }
-        */
-        /* lab3
-        private void lab3_Click(object sender, EventArgs e)
-        {
-            dataGridView1.Rows.Clear();
-
-            double a = Convert.ToDouble(textBoxA.Text);
-            double b = Convert.ToDouble(textBoxB.Text);
-            double d = Convert.ToDouble(textBoxD.Text);
-            string dHelp = textBoxD.Text.Split(',').Last();
-
-            double n = Convert.ToDouble(textBoxN.Text);
-            double l = Math.Ceiling(Math.Log(((1 / d) * (b - a) + 1), 2)); // obliczanie l czyli na ilu bitach się liczba zmiejsci
-
-            List<double> xreal = new List<double>();
-            List<double> fx = new List<double>();
-            List<double> gx = new List<double>();
-            List<double> px = new List<double>();
-            List<double> qx = new List<double>();
-            List<double> r = new List<double>();
-            List<double> xreal2 = new List<double>();
-
-            xreal = InitPopulation(a, b, n); //wygenerowanie populacji xReal
-            fx = CalculateFunction(xreal); // wyliczenie funkcji f(x)
-
-            Lab3 lab3 = new Lab3(dHelp.Length);
-
-            gx = lab3.searchGx(fx, d);
-            px = lab3.countPx(gx);
-            qx = lab3.countDx(px);
-            r = RandomNumber(n);
-            xreal2 = lab3.pickXreal(xreal, qx, r, n);
-
-
-            
-            for (int i = 0; i < n; i++)
-            {
-                genTable.Add(new GenerateTable(i + 1, xreal[i], fx[i], gx[i], Convert.ToDecimal(px[i]), qx[i], r[i], xreal2[i]));
-
-            }
-
-            dataGridView1.DataSource = genTable;
-            dataGridView1.DataSource = generateTableBindingSource;
-
-            ((CurrencyManager)BindingContext[genTable]).Refresh();
-        }*/
-        /*
-        lab2 
-        private void StartButton_Click(object sender, EventArgs e)
-        {
-            dataGridView1.Rows.Clear();
-
-            double a = Convert.ToDouble(textBoxA.Text);
-            double b = Convert.ToDouble(textBoxB.Text);
-            double d = Convert.ToDouble(textBoxD.Text);
-            
-            double n = Convert.ToDouble(textBoxN.Text);
-            double l = Math.Ceiling(Math.Log(((1 / d) * (b - a) + 1), 2)); // obliczanie l czyli na ilu bitach się liczba zmiejsci
-
-            List<double> xreal = new List<double>();
-            List<double> fx = new List<double>();
-
-            List<int> xint = new List<int>();
-            List<string> xbin = new List<string>();
-            List<int> xint1 = new List<int>();
-            List<double> xreal1 = new List<double>();         
-
-            ConvertFromAndToDecimal convertFormAndToDecimal = new ConvertFromAndToDecimal();
-
-            xreal = InitPopulation(a, b, n); //wygenerowanie populacji xReal
-            xint = FromXrealToXint(xreal, a, b, l); //wygenerowanie xint (xreal -> xint)
-
-            foreach(var item in xint)    // wygenerowanie ciagu binarnego (xint -> xbin)
-            {
-                xbin.Add(convertFormAndToDecimal.convertTo(item, 2, l));
-            }
-
-            foreach (var item in xbin)    // wygenerowanie xint (xbin -> xint)
-            {
-                xint1.Add(convertFormAndToDecimal.convertFrom(item, 2));
-            }
-
-            xreal1 = FromXintToXreal(xint1, a, b, l); //wygenerowanie z xint1 do xreal1
-            
-
-           
-            fx = CalculateFunction(xreal); // wyliczenie funkcji f(x)
-
-            
-
-            for(int i = 0; i<n; i++)
-            {
-                genTable.Add(new GenerateTable(i + 1, xreal[i], xint[i], xbin[i], xint1[i], xreal1[i], fx[i]));
-
-            }
-
-            dataGridView1.DataSource = genTable;
-            dataGridView1.DataSource = generateTableBindingSource;
-
-            ((CurrencyManager)BindingContext[genTable]).Refresh();
-
-            //genTable.Clear();
-
-        }
-        */
 
     }
 }

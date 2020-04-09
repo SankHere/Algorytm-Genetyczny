@@ -67,15 +67,16 @@ namespace ISAPro
                 pickNumber = 0;
                 foreach(var limit in qx)
                 {
-                    if(randomNumber > limit)
+                    if(randomNumber < limit)
                     {
-                        pickNumber++;
+                        break;
                     }
+                    pickNumber++;
                 }
-
+                //zabezpieczenie mała szans ale moze wyjsc poza zakres, wina zaokragleń
                 if (pickNumber > n)
                 {
-                    pickNumber = (int)n;
+                    pickNumber = (int)n-1;
                 }
 
                 xreal2.Add(xreal[pickNumber]);

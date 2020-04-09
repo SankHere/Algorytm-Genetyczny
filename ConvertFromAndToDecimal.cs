@@ -51,6 +51,32 @@ namespace ISAPro
             return result;
         }
 
+
+        public String intToBinarty(int n, double l)
+        {
+
+           // double xint = Math.Ceiling(((xreal22 - dane.A) * (Math.Pow(2, l) - 1) / (dane.B - dane.A)));
+
+            double j = l - 1;
+            double help = n;
+            string xbit = "";
+            do
+            {
+                if (Math.Pow(2, j) <= help)
+                {
+                    xbit = xbit + "1";
+                    help = help - (Math.Pow(2, j));
+                }
+                else
+                {
+                    xbit = xbit + "0";
+
+                }
+                j--;
+            } while (j >= 0);
+
+            return xbit;
+        }
         /// <summary>
         /// Returns value of character in a given base
         /// </summary>

@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.labelA = new System.Windows.Forms.Label();
             this.labelB = new System.Windows.Forms.Label();
             this.labelD = new System.Windows.Forms.Label();
@@ -38,6 +43,9 @@
             this.textBoxD = new System.Windows.Forms.TextBox();
             this.textBoxN = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.xreal = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.fx = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.amount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.labelPk = new System.Windows.Forms.Label();
             this.labelPm = new System.Windows.Forms.Label();
             this.textBoxPk = new System.Windows.Forms.TextBox();
@@ -45,14 +53,21 @@
             this.Lab5 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxT = new System.Windows.Forms.TextBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.lpDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.generateTableBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.generateTableBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.lpDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.xreal = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.fx = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.amount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
@@ -136,11 +151,29 @@
             this.fx,
             this.amount});
             this.dataGridView1.DataSource = this.generateTableBindingSource1;
-            this.dataGridView1.Location = new System.Drawing.Point(119, 72);
+            this.dataGridView1.Location = new System.Drawing.Point(150, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(640, 340);
+            this.dataGridView1.Size = new System.Drawing.Size(593, 409);
             this.dataGridView1.TabIndex = 9;
+            // 
+            // xreal
+            // 
+            this.xreal.DataPropertyName = "xreal";
+            this.xreal.HeaderText = "xreal";
+            this.xreal.Name = "xreal";
+            // 
+            // fx
+            // 
+            this.fx.DataPropertyName = "fx";
+            this.fx.HeaderText = "fx";
+            this.fx.Name = "fx";
+            // 
+            // amount
+            // 
+            this.amount.DataPropertyName = "amount";
+            this.amount.HeaderText = "amount(%)";
+            this.amount.Name = "amount";
             // 
             // labelPk
             // 
@@ -170,7 +203,7 @@
             // 
             // textBoxPm
             // 
-            this.textBoxPm.Location = new System.Drawing.Point(934, 19);
+            this.textBoxPm.Location = new System.Drawing.Point(934, 17);
             this.textBoxPm.Name = "textBoxPm";
             this.textBoxPm.Size = new System.Drawing.Size(100, 22);
             this.textBoxPm.TabIndex = 14;
@@ -178,9 +211,9 @@
             // 
             // Lab5
             // 
-            this.Lab5.Location = new System.Drawing.Point(1293, 19);
+            this.Lab5.Location = new System.Drawing.Point(12, 63);
             this.Lab5.Name = "Lab5";
-            this.Lab5.Size = new System.Drawing.Size(75, 23);
+            this.Lab5.Size = new System.Drawing.Size(1184, 51);
             this.Lab5.TabIndex = 15;
             this.Lab5.Text = "Start";
             this.Lab5.UseVisualStyleBackColor = true;
@@ -189,7 +222,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1040, 22);
+            this.label1.Location = new System.Drawing.Point(1036, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 17);
             this.label1.TabIndex = 16;
@@ -197,11 +230,96 @@
             // 
             // textBoxT
             // 
-            this.textBoxT.Location = new System.Drawing.Point(1103, 19);
+            this.textBoxT.Location = new System.Drawing.Point(1099, 17);
             this.textBoxT.Name = "textBoxT";
             this.textBoxT.Size = new System.Drawing.Size(100, 22);
             this.textBoxT.TabIndex = 17;
             this.textBoxT.Text = "100";
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(107, 120);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(927, 438);
+            this.tabControl1.TabIndex = 19;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.dataGridView1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(919, 409);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Wyniki";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.label3);
+            this.tabPage2.Controls.Add(this.label2);
+            this.tabPage2.Controls.Add(this.chart1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(919, 409);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Wykres";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // chart1
+            // 
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
+            this.chart1.Location = new System.Drawing.Point(-3, 0);
+            this.chart1.Name = "chart1";
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "FxMAX";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "FxAVG";
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "FxMIN";
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
+            this.chart1.Series.Add(series3);
+            this.chart1.Size = new System.Drawing.Size(922, 406);
+            this.chart1.TabIndex = 0;
+            this.chart1.Text = "chart1";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(444, 386);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(17, 17);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "T";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(3, 172);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(18, 17);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "fx";
+            // 
+            // lpDataGridViewTextBoxColumn
+            // 
+            this.lpDataGridViewTextBoxColumn.DataPropertyName = "Lp";
+            this.lpDataGridViewTextBoxColumn.HeaderText = "Lp";
+            this.lpDataGridViewTextBoxColumn.Name = "lpDataGridViewTextBoxColumn";
             // 
             // generateTableBindingSource1
             // 
@@ -215,35 +333,12 @@
             // 
             this.form1BindingSource.DataSource = typeof(ISAPro.Form1);
             // 
-            // lpDataGridViewTextBoxColumn
-            // 
-            this.lpDataGridViewTextBoxColumn.DataPropertyName = "Lp";
-            this.lpDataGridViewTextBoxColumn.HeaderText = "Lp";
-            this.lpDataGridViewTextBoxColumn.Name = "lpDataGridViewTextBoxColumn";
-            // 
-            // xreal
-            // 
-            this.xreal.DataPropertyName = "xreal";
-            this.xreal.HeaderText = "xreal";
-            this.xreal.Name = "xreal";
-            // 
-            // fx
-            // 
-            this.fx.DataPropertyName = "fx";
-            this.fx.HeaderText = "fx";
-            this.fx.Name = "fx";
-            // 
-            // amount
-            // 
-            this.amount.DataPropertyName = "amount";
-            this.amount.HeaderText = "amount(%)";
-            this.amount.Name = "amount";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1751, 509);
+            this.ClientSize = new System.Drawing.Size(1204, 587);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.textBoxT);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Lab5);
@@ -251,7 +346,6 @@
             this.Controls.Add(this.textBoxPk);
             this.Controls.Add(this.labelPm);
             this.Controls.Add(this.labelPk);
-            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.textBoxN);
             this.Controls.Add(this.textBoxD);
             this.Controls.Add(this.textBoxB);
@@ -263,6 +357,11 @@
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
@@ -296,6 +395,12 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn xreal;
         private System.Windows.Forms.DataGridViewTextBoxColumn fx;
         private System.Windows.Forms.DataGridViewTextBoxColumn amount;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
     }
 }
 
