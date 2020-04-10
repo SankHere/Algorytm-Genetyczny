@@ -51,6 +51,8 @@ namespace ISAPro
             double Pm = Convert.ToDouble(textBoxPm.Text);
             int T = Convert.ToInt32(textBoxT.Text);
 
+            Boolean eliteChecked = checkBoxEilte.Checked;
+
             List<double> xreal = new List<double>();
             List<double> fx = new List<double>();
             List<double> gx = new List<double>();
@@ -104,34 +106,36 @@ namespace ISAPro
             stopWatch.Start();
 
             xreal = InitPopulation(a, b, n); //wygenerowanie populacji xReal
-                     
+                 
+                
             for (int z = 0; z < T; z++)
             {
                 fx = CalculateFunction(xreal); // wyliczenie funkcji f(x)
 
-                if (elitefx > fx.Max())
-                {
-                    //wstawianie elity 
-                    elitePoint = random.Next(0, (int)n);
-                    fx[el] = elitefx;
-                    xreal3[el] = elitexreal;
-                }
-                else
-                {
-                    //generowanie elity
-                    el = 0;
-                    elitefx = fx.Max();
-                    foreach (var elite in fx)
+                if (eliteChecked) { 
+                    if (elitefx > fx.Max())
                     {
-                        if (fx.Max() == elite)
+                        //wstawianie elity 
+                        elitePoint = random.Next(0, (int)n);
+                        fx[el] = elitefx;
+                        xreal3[el] = elitexreal;
+                    }
+                    else
+                    {
+                        //generowanie elity
+                        el = 0;
+                        elitefx = fx.Max();
+                        foreach (var elite in fx)
                         {
-                            elitexreal = xreal[el];
-                            break;
+                            if (fx.Max() == elite)
+                            {
+                                elitexreal = xreal[el];
+                                break;
+                            }
+                            el++;
                         }
-                        el++;
                     }
                 }
-
                 WriteGenerationForModul8(xreal, fx, elitexreal, z); //zapisywanie do pliku pokolenia
 
                 fxmin.Add(fx.Min());
@@ -157,13 +161,7 @@ namespace ISAPro
                 r = RandomNumber(n);
 
                 xParents = lab4.serachParets(xreal2bin, r, Pk);  //generowania pokolenia rodziców 
-                foreach(var item in xParents)
-                {
-                    if(item == "0")
-                    {
-                        Console.WriteLine("zero");
-                    }
-                }
+
                 Pc = lab4.searchSection(xParents, l);
 
                 children = lab4.doChildren(xParents, Pc);

@@ -43,9 +43,11 @@
             this.textBoxD = new System.Windows.Forms.TextBox();
             this.textBoxN = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.lpDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.xreal = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.fx = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.amount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.generateTableBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.labelPk = new System.Windows.Forms.Label();
             this.labelPm = new System.Windows.Forms.Label();
             this.textBoxPk = new System.Windows.Forms.TextBox();
@@ -56,19 +58,19 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.lpDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.generateTableBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.label2 = new System.Windows.Forms.Label();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.generateTableBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.checkBoxEilte = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             this.SuspendLayout();
@@ -157,6 +159,12 @@
             this.dataGridView1.Size = new System.Drawing.Size(593, 409);
             this.dataGridView1.TabIndex = 9;
             // 
+            // lpDataGridViewTextBoxColumn
+            // 
+            this.lpDataGridViewTextBoxColumn.DataPropertyName = "Lp";
+            this.lpDataGridViewTextBoxColumn.HeaderText = "Lp";
+            this.lpDataGridViewTextBoxColumn.Name = "lpDataGridViewTextBoxColumn";
+            // 
             // xreal
             // 
             this.xreal.DataPropertyName = "xreal";
@@ -174,6 +182,10 @@
             this.amount.DataPropertyName = "amount";
             this.amount.HeaderText = "amount(%)";
             this.amount.Name = "amount";
+            // 
+            // generateTableBindingSource1
+            // 
+            this.generateTableBindingSource1.DataSource = typeof(ISAPro.GenerateTable);
             // 
             // labelPk
             // 
@@ -213,7 +225,7 @@
             // 
             this.Lab5.Location = new System.Drawing.Point(12, 63);
             this.Lab5.Name = "Lab5";
-            this.Lab5.Size = new System.Drawing.Size(1184, 51);
+            this.Lab5.Size = new System.Drawing.Size(1253, 51);
             this.Lab5.TabIndex = 15;
             this.Lab5.Text = "Start";
             this.Lab5.UseVisualStyleBackColor = true;
@@ -234,13 +246,13 @@
             this.textBoxT.Name = "textBoxT";
             this.textBoxT.Size = new System.Drawing.Size(100, 22);
             this.textBoxT.TabIndex = 17;
-            this.textBoxT.Text = "100";
+            this.textBoxT.Text = "10";
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(107, 120);
+            this.tabControl1.Location = new System.Drawing.Point(196, 120);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(927, 438);
@@ -270,6 +282,24 @@
             this.tabPage2.Text = "Wykres";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(3, 172);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(18, 17);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "fx";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(444, 386);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(17, 17);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "T";
+            // 
             // chart1
             // 
             chartArea1.Name = "ChartArea1";
@@ -297,34 +327,6 @@
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(444, 386);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(17, 17);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "T";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 172);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(18, 17);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "fx";
-            // 
-            // lpDataGridViewTextBoxColumn
-            // 
-            this.lpDataGridViewTextBoxColumn.DataPropertyName = "Lp";
-            this.lpDataGridViewTextBoxColumn.HeaderText = "Lp";
-            this.lpDataGridViewTextBoxColumn.Name = "lpDataGridViewTextBoxColumn";
-            // 
-            // generateTableBindingSource1
-            // 
-            this.generateTableBindingSource1.DataSource = typeof(ISAPro.GenerateTable);
-            // 
             // generateTableBindingSource
             // 
             this.generateTableBindingSource.DataSource = typeof(ISAPro.GenerateTable);
@@ -333,11 +335,31 @@
             // 
             this.form1BindingSource.DataSource = typeof(ISAPro.Form1);
             // 
+            // checkBoxEilte
+            // 
+            this.checkBoxEilte.AutoSize = true;
+            this.checkBoxEilte.Location = new System.Drawing.Point(1246, 20);
+            this.checkBoxEilte.Name = "checkBoxEilte";
+            this.checkBoxEilte.Size = new System.Drawing.Size(18, 17);
+            this.checkBoxEilte.TabIndex = 20;
+            this.checkBoxEilte.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(1205, 20);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 17);
+            this.label4.TabIndex = 21;
+            this.label4.Text = "Elita";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1204, 587);
+            this.ClientSize = new System.Drawing.Size(1285, 587);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.checkBoxEilte);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.textBoxT);
             this.Controls.Add(this.label1);
@@ -357,12 +379,12 @@
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
             this.ResumeLayout(false);
@@ -401,6 +423,8 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox checkBoxEilte;
+        private System.Windows.Forms.Label label4;
     }
 }
 

@@ -54,7 +54,6 @@ namespace ISAPro
                 {
                     Pc.Add(0);
                 }
-
             }
             return Pc;
         }
@@ -89,7 +88,6 @@ namespace ISAPro
                 {
                     even++;
                 }
-
             }
 
            foreach (var item in xParents)
@@ -119,8 +117,8 @@ namespace ISAPro
                         r22 = secondParent.Substring(Pc[help], length);
 
                         firstChild = r11 + r22;
-                        secondChild = r12 + r21;
-
+                        //secondChild = r12 + r21;
+                        secondChild = r21 + r12;
                         children.Add(firstChild);
                         if(help3 > 0)
                         {
@@ -153,9 +151,7 @@ namespace ISAPro
                                 children.Add(null);
                             }
                         }
-
                         break;
-
                     }
                     if(help2 < 1)
                     {
@@ -164,8 +160,7 @@ namespace ISAPro
                     else
                     {
                         help3++;
-                    }
-                    
+                    }                  
                 }
                 help++;
             }
@@ -201,8 +196,6 @@ namespace ISAPro
             List<int> pointsMutation = new List<int>();
 
             int k = 0;
-            //int mutation = 0;
-
             foreach (var number in randomNumbers)
             {
                 if(number < Pm)
@@ -221,7 +214,7 @@ namespace ISAPro
         public string doMutation(string xbinChildren, List<int> searchMutation)
         {
             string xbinMutation = xbinChildren;
-            //string a = xbinChildren[0];
+           
             foreach(var item in searchMutation)
             {
                 if(item != 0)
