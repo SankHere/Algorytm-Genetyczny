@@ -59,7 +59,7 @@ namespace ISAPro
         }
 
 
-        public List<string> doChildren(List<string> xParents, List<int> Pc)
+        public List<string> doChildren(List<string> xParents, List<int> Pc, double n)
         {
             List<string> children = new List<string>();
 
@@ -163,6 +163,13 @@ namespace ISAPro
                     }                  
                 }
                 help++;
+            }
+            if (children.Count < n)
+            {
+                for (int doMore = children.Count; doMore < n; doMore++)
+                {
+                    children.Add(null);
+                }
             }
             return children;
         }

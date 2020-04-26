@@ -30,8 +30,88 @@ namespace ISAPro
             ((CurrencyManager)BindingContext[genTable]).Refresh();
 
         }
+
+        private void GEO_Click(object sender, EventArgs e)
+        {
+            //zmienne od użytkownika
+            double a = Convert.ToDouble(textBoxA.Text);
+            double b = Convert.ToDouble(textBoxB.Text);
+            double d = Convert.ToDouble(textBoxD.Text);
+            string dHelp = textBoxD.Text.Split(',').Last();
+            double l = Math.Ceiling(Math.Log(((1 / d) * (b - a) + 1), 2)); // obliczanie l czyli na ilu bitach się liczba zmiejsci
+            int T = Convert.ToInt32(textBoxT.Text);
+            double tao = Convert.ToDouble(textBoxTau.Text);
+
+            
+            List<double> xreal = new List<double>();
+            List<double> xrealChange = new List<double>();
+            List<double> fx = new List<double>();
+            List<int> xint = new List<int>();
+            //List<string> xbin = new List<string>();
+            string xbin;
+            int i;
+            //najlepsze wyniki
+            double xrealbest;
+            double fxbest;
+            string xbinbest;
+            //wyniki po zmianie bitu
+            List<string> xbinChange = new List<string>();
+            //Losowe liczby
+            List<double> randomNumbers = new List<double>();
+            
+            List<double> px = new List<double>();//Prawdopodobieństwo wystąpienia zmiany
+            List<int> r = new List<int>(); //nadanie rang
+
+            ConvertFromAndToDecimal convertFromAndToDecimal = new ConvertFromAndToDecimal();
+            GEO geo = new GEO();
+
+
+            xreal = InitPopulation(a, b, 1);
+
+            fx = CalculateFunction(xreal);
+            xint = FromXrealToXint(xreal, a, b, l);
+            xbin = convertFromAndToDecimal.intToBinarty(xint[0], l);
+
+            //przypisanie najlepszego wyniku
+            xrealbest = xreal[0];
+            fxbest = fx[0];
+            xbinbest = xbin;
+
+            //zmiana bitów
+            xbinChange.Clear();
+            for (i=0; i < xbin.Length; i++)
+            {
+                xbinChange.Add(geo.changeBit(xbin, i));
+            }
+
+            //zmina z xbin -> xint aby wyznaczyć wartości funkcji
+            xint.Clear();
+            foreach (var item in xbinChange)    // wygenerowanie xint (xbin -> xint)
+            {
+                xint.Add(convertFromAndToDecimal.convertFrom(item, 2));
+            }
+
+            xrealChange = FromXintToXreal(xint, a, b, l); //wygenerowanie z xint do xreal
+
+            //obliczanie funkji 
+            fx = CalculateFunction(xrealChange);
+
+            //nadawanie rangi
+            fx.Sort();
+            fx.Reverse();
+
+            //obliczanie prawdopodobieństwa
+            px.Clear();
+            for(i=0; i < fx.Count(); i++)
+            {
+                px.Add(geo.px(i + 1, tao));
+            }
+
+        }
+
+
         //lab5
-        private void Lab5_Click(object sender, EventArgs e)
+        private void AlgorytmGenetyczny_Click(object sender, EventArgs e)
         {
             //do pomiaru czasu
             Stopwatch stopWatch = new Stopwatch();
@@ -81,8 +161,8 @@ namespace ISAPro
 
             double elitefx = 0;
             double elitexreal = 0;
-            List<double> elitefxlist = new List<double>();
-            List<double> elitexreallist = new List<double>();
+            //List<double> elitefxlist = new List<double>();
+           // List<double> elitexreallist = new List<double>();
 
             Dictionary<double, int> dict = new Dictionary<double, int>(); //do obliczania wystapien danego elementu
             
@@ -144,7 +224,7 @@ namespace ISAPro
 
                 gx = lab3.searchGx(fx, d);
                 px = lab3.countPx(gx);
-                qx = lab3.countDx(px);
+                qx = lab3.countQx(px);
                 r = RandomNumber(n);
                 xreal2 = lab3.pickXreal(xreal, qx, r, n); // populacja po selekcji 
 
@@ -164,7 +244,7 @@ namespace ISAPro
 
                 Pc = lab4.searchSection(xParents, l);
 
-                children = lab4.doChildren(xParents, Pc);
+                children = lab4.doChildren(xParents, Pc, n);
                 xbinChildren = lab4.doXbinChildren(children, xreal2bin);
 
                 pointsMutation.Clear();
@@ -191,8 +271,8 @@ namespace ISAPro
 
                 fx = CalculateFunction(xreal3); // wyliczenie funkcji f(x)
 
-                elitefxlist.Add(elitefx);
-                elitexreallist.Add(elitexreal);
+               // elitefxlist.Add(elitefx);
+               // elitexreallist.Add(elitexreal);
 
                 xreal = xreal3;
             }
@@ -202,7 +282,7 @@ namespace ISAPro
             chart1.Series["FxMAX"].Points.Clear();
             chart1.Series["FxAVG"].Points.Clear();
             chart1.Series["FxMIN"].Points.Clear();
-            
+
             Chart_Draw(fxmax, fxavg, fxmin, T);
 
             dict = countOccurrence(xreal3);
@@ -399,18 +479,19 @@ namespace ISAPro
             return xint;
         }
 
-        private List<double> FromXintToXreal(List<int> xint1, double a, double b, double l)
+        private List<double> FromXintToXreal(List<int> xint, double a, double b, double l)
         {
             List<double> xreal1 = new List<double>();
 
             string dHelp = textBoxD.Text.Split(',').Last();
 
-            foreach (var item in xint1)
+            foreach (var item in xint)
             {
                 xreal1.Add(Math.Round((((b - a) * item) / (Math.Pow(2, l) - 1) + a), dHelp.Length));
             }
             return xreal1;
         }
+
 
     }
 }

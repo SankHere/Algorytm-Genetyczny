@@ -55,6 +55,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GenerateTable.cs" />
+    <Compile Include="GEO.cs" />
     <Compile Include="Lab3.cs" />
     <Compile Include="Lab4.cs" />
     <Compile Include="Program.cs" />

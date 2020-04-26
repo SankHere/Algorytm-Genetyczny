@@ -43,7 +43,7 @@ namespace ISAPro
             return px;
         }
 
-        public List<double> countDx(List<double> px)
+        public List<double> countQx(List<double> px)
         {
             List<double> qx = new List<double>();
 

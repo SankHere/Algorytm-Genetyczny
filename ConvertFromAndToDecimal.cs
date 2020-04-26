@@ -54,9 +54,6 @@ namespace ISAPro
 
         public String intToBinarty(int n, double l)
         {
-
-           // double xint = Math.Ceiling(((xreal22 - dane.A) * (Math.Pow(2, l) - 1) / (dane.B - dane.A)));
-
             double j = l - 1;
             double help = n;
             string xbit = "";
