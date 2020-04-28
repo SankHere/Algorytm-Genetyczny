@@ -40,7 +40,7 @@ namespace ISAPro
             string dHelp = textBoxD.Text.Split(',').Last();
             double l = Math.Ceiling(Math.Log(((1 / d) * (b - a) + 1), 2)); // obliczanie l czyli na ilu bitach się liczba zmiejsci
             int T = Convert.ToInt32(textBoxT.Text);
-            double tao = Convert.ToDouble(textBoxTau.Text);
+            double tau = Convert.ToDouble(textBoxTau.Text);
 
             
             List<double> xreal = new List<double>();
@@ -49,64 +49,101 @@ namespace ISAPro
             List<int> xint = new List<int>();
             //List<string> xbin = new List<string>();
             string xbin;
-            int i;
+            int i = 0;
+            int counter = 0;
             //najlepsze wyniki
-            double xrealbest;
-            double fxbest;
-            string xbinbest;
+            double xrealbest = 0;
+            double fxbest = 0;
+            string xbinbest = "0";
+
+            string xbinb;
             //wyniki po zmianie bitu
             List<string> xbinChange = new List<string>();
+            //rangi
+            List<int> rangs = new List<int>();
             //Losowe liczby
             List<double> randomNumbers = new List<double>();
             
             List<double> px = new List<double>();//Prawdopodobieństwo wystąpienia zmiany
             List<int> r = new List<int>(); //nadanie rang
 
+
             ConvertFromAndToDecimal convertFromAndToDecimal = new ConvertFromAndToDecimal();
             GEO geo = new GEO();
 
+            //czyszczenie serii dla wykresu, zeby dla kazdego nowego start generował od zera
+            chart2.Titles.Clear();
+            chart2.Series["Fx"].Points.Clear();
+            chart2.Series["FxBest"].Points.Clear();
+            chart2.Titles.Add("Historia");
+            counter = 0;
 
             xreal = InitPopulation(a, b, 1);
 
-            fx = CalculateFunction(xreal);
-            xint = FromXrealToXint(xreal, a, b, l);
-            xbin = convertFromAndToDecimal.intToBinarty(xint[0], l);
-
-            //przypisanie najlepszego wyniku
-            xrealbest = xreal[0];
-            fxbest = fx[0];
-            xbinbest = xbin;
-
-            //zmiana bitów
-            xbinChange.Clear();
-            for (i=0; i < xbin.Length; i++)
+            do
             {
-                xbinChange.Add(geo.changeBit(xbin, i));
-            }
+                fx = CalculateFunction(xreal);
+                xint = FromXrealToXint(xreal, a, b, l);
+                xbin = convertFromAndToDecimal.intToBinarty(xint[0], l);
 
-            //zmina z xbin -> xint aby wyznaczyć wartości funkcji
-            xint.Clear();
-            foreach (var item in xbinChange)    // wygenerowanie xint (xbin -> xint)
-            {
-                xint.Add(convertFromAndToDecimal.convertFrom(item, 2));
-            }
+                //przypisanie najlepszego wyniku
+                if (fxbest < fx[0])
+                {
+                    xrealbest = xreal[0];
+                    fxbest = fx[0];
+                    xbinbest = xbin;
+                }
 
-            xrealChange = FromXintToXreal(xint, a, b, l); //wygenerowanie z xint do xreal
+                chart2.Series["Fx"].Points.AddXY((counter + 1), fx[0]);
+                chart2.Series["FxBest"].Points.AddXY((counter + 1), fxbest);
+                counter++;
 
-            //obliczanie funkji 
-            fx = CalculateFunction(xrealChange);
+                //zmiana bitów
+                xbinChange.Clear();
+                for (i = 0; i < xbin.Length; i++)
+                {
+                    xbinChange.Add(geo.changeBit(xbin, i));
+                }
 
-            //nadawanie rangi
-            fx.Sort();
-            fx.Reverse();
+                //zmina z xbin -> xint aby wyznaczyć wartości funkcji
+                xint.Clear();
+                foreach (var item in xbinChange)    // wygenerowanie xint (xbin -> xint)
+                {
+                    xint.Add(convertFromAndToDecimal.convertFrom(item, 2));
+                }
 
-            //obliczanie prawdopodobieństwa
-            px.Clear();
-            for(i=0; i < fx.Count(); i++)
-            {
-                px.Add(geo.px(i + 1, tao));
-            }
+                xrealChange = FromXintToXreal(xint, a, b, l); //wygenerowanie z xint do xreal
 
+                //obliczanie funkji 
+                fx = CalculateFunction(xrealChange);
+
+                //nadawanie rangi
+                rangs = geo.doRang(fx);
+
+                //obliczanie prawdopodobieństwa
+                px.Clear();
+                for (i = 0; i < fx.Count(); i++)
+                {
+                    px.Add(geo.px(i + 1, tau));
+                }
+                //losowanie l liczb z zakresu 0-1
+                randomNumbers = RandomNumber(l);
+
+                xbinb = "";
+                for (i = 0; i < xbin.Length; i++)
+                {
+                    xbinb = xbinb + geo.doMutationGEO(xbin[i], randomNumbers[i], px[i]);
+                }
+
+                xint.Clear();
+                xint.Add(convertFromAndToDecimal.convertFrom(xbinb, 2)); //xbin --> xint)
+
+                xreal = FromXintToXreal(xint, a, b, l); //wygenerowanie z xint do xreal
+                T--;
+            } while (T > 0);
+
+
+            richTextBoxGEO.Text = "Najlepszy wynik: \nxreal: " + xrealbest + " \nxbin: " + xbinbest + " \nfx: " + fxbest;
         }
 
 
@@ -283,7 +320,7 @@ namespace ISAPro
             chart1.Series["FxAVG"].Points.Clear();
             chart1.Series["FxMIN"].Points.Clear();
 
-            Chart_Draw(fxmax, fxavg, fxmin, T);
+            Chart_Draw(fxmax, fxavg, fxmin);
 
             dict = countOccurrence(xreal3);
             
@@ -318,8 +355,9 @@ namespace ISAPro
             GenerateFileModul9(a, b, d, n, T, Pk, Pm, fxmax, fxavg, fxmin, elapsedTime);
         }
 
-        //generujemy wykres
-        private void Chart_Draw(List<double> FxMax, List<double> FxAVG, List<double> FxMIN, int T)
+
+        //generujemy wykres Algorytm Genetyczny
+        private void Chart_Draw(List<double> FxMax, List<double> FxAVG, List<double> FxMIN)
         {
             int counter = 0;
             chart1.Titles.Add("Historia");
@@ -491,7 +529,6 @@ namespace ISAPro
             }
             return xreal1;
         }
-
 
     }
 }
