@@ -86,17 +86,19 @@ namespace ISAPro
                 xint = FromXrealToXint(xreal, a, b, l);
                 xbin = convertFromAndToDecimal.intToBinarty(xint[0], l);
 
+                counter++;
                 //przypisanie najlepszego wyniku
                 if (fxbest < fx[0])
                 {
                     xrealbest = xreal[0];
                     fxbest = fx[0];
                     xbinbest = xbin;
+                    //generowanie pliku
+                    geo.generateFileGEO("plikGEO.txt", xrealbest, xbinbest, fxbest, counter);
                 }
-
-                chart2.Series["Fx"].Points.AddXY((counter + 1), fx[0]);
-                chart2.Series["FxBest"].Points.AddXY((counter + 1), fxbest);
-                counter++;
+                
+                chart2.Series["Fx"].Points.AddXY((counter), fx[0]);
+                chart2.Series["FxBest"].Points.AddXY((counter), fxbest);
 
                 //zmiana bitów
                 xbinChange.Clear();

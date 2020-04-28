@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,6 +78,18 @@ namespace ISAPro
             }
             else{
                 return bit;
+            }
+        }
+        //Generowanie pliku
+        public void generateFileGEO(string fileName, double xrealbest, string xrealbinbest, double fxbest, int pokolenie)
+        {
+
+            string pathString = Path.Combine("", fileName);
+
+
+            using (StreamWriter file = new StreamWriter(pathString, true))
+            {
+                file.WriteLine("Pokolenie: " + pokolenie + "\t\t xrealbest: " + xrealbest + "\t\t xrealbinbest: " + xrealbinbest + "\t\t fxbest: " + fxbest);
             }
         }
     }
