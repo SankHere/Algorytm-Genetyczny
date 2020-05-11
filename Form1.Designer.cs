@@ -38,6 +38,8 @@
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.labelA = new System.Windows.Forms.Label();
             this.labelB = new System.Windows.Forms.Label();
             this.labelD = new System.Windows.Forms.Label();
@@ -47,9 +49,11 @@
             this.textBoxD = new System.Windows.Forms.TextBox();
             this.textBoxN = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.lpDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.xreal = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.fx = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.amount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.generateTableBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.labelPk = new System.Windows.Forms.Label();
             this.labelPm = new System.Windows.Forms.Label();
             this.textBoxPk = new System.Windows.Forms.TextBox();
@@ -62,25 +66,28 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.checkBoxEilte = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.textBoxTau = new System.Windows.Forms.TextBox();
             this.GEO = new System.Windows.Forms.Button();
             this.richTextBoxGEO = new System.Windows.Forms.RichTextBox();
-            this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.lpDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.generateTableBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.ANW = new System.Windows.Forms.Button();
             this.generateTableBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.form1BindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).BeginInit();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).BeginInit();
             this.SuspendLayout();
@@ -163,11 +170,17 @@
             this.fx,
             this.amount});
             this.dataGridView1.DataSource = this.generateTableBindingSource1;
-            this.dataGridView1.Location = new System.Drawing.Point(201, 0);
+            this.dataGridView1.Location = new System.Drawing.Point(320, 0);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
             this.dataGridView1.Size = new System.Drawing.Size(593, 409);
             this.dataGridView1.TabIndex = 9;
+            // 
+            // lpDataGridViewTextBoxColumn
+            // 
+            this.lpDataGridViewTextBoxColumn.DataPropertyName = "Lp";
+            this.lpDataGridViewTextBoxColumn.HeaderText = "Lp";
+            this.lpDataGridViewTextBoxColumn.Name = "lpDataGridViewTextBoxColumn";
             // 
             // xreal
             // 
@@ -186,6 +199,10 @@
             this.amount.DataPropertyName = "amount";
             this.amount.HeaderText = "amount(%)";
             this.amount.Name = "amount";
+            // 
+            // generateTableBindingSource1
+            // 
+            this.generateTableBindingSource1.DataSource = typeof(ISAPro.GenerateTable);
             // 
             // labelPk
             // 
@@ -225,7 +242,7 @@
             // 
             this.AlgorytmGenetyczny.Location = new System.Drawing.Point(26, 103);
             this.AlgorytmGenetyczny.Name = "AlgorytmGenetyczny";
-            this.AlgorytmGenetyczny.Size = new System.Drawing.Size(737, 44);
+            this.AlgorytmGenetyczny.Size = new System.Drawing.Size(1257, 44);
             this.AlgorytmGenetyczny.TabIndex = 15;
             this.AlgorytmGenetyczny.Text = "Start Algorytm Genetyczny";
             this.AlgorytmGenetyczny.UseVisualStyleBackColor = true;
@@ -246,17 +263,18 @@
             this.textBoxT.Name = "textBoxT";
             this.textBoxT.Size = new System.Drawing.Size(100, 22);
             this.textBoxT.TabIndex = 17;
-            this.textBoxT.Text = "130";
+            this.textBoxT.Text = "40";
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(26, 165);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(995, 438);
+            this.tabControl1.Size = new System.Drawing.Size(1261, 438);
             this.tabControl1.TabIndex = 19;
             // 
             // tabPage1
@@ -265,7 +283,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(987, 409);
+            this.tabPage1.Size = new System.Drawing.Size(1253, 409);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Wyniki AG";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -276,7 +294,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(987, 409);
+            this.tabPage2.Size = new System.Drawing.Size(1253, 409);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Wykres AG";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -304,7 +322,7 @@
             this.chart1.Series.Add(series1);
             this.chart1.Series.Add(series2);
             this.chart1.Series.Add(series3);
-            this.chart1.Size = new System.Drawing.Size(990, 406);
+            this.chart1.Size = new System.Drawing.Size(1281, 406);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
             // 
@@ -313,10 +331,57 @@
             this.tabPage3.Controls.Add(this.chart2);
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(987, 409);
+            this.tabPage3.Size = new System.Drawing.Size(1253, 409);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Wykres GEO";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // chart2
+            // 
+            chartArea2.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart2.Legends.Add(legend2);
+            this.chart2.Location = new System.Drawing.Point(0, 0);
+            this.chart2.Name = "chart2";
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Color = System.Drawing.Color.Red;
+            series4.Legend = "Legend1";
+            series4.Name = "Fx";
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Color = System.Drawing.Color.Lime;
+            series5.Legend = "Legend1";
+            series5.Name = "FxBest";
+            this.chart2.Series.Add(series4);
+            this.chart2.Series.Add(series5);
+            this.chart2.Size = new System.Drawing.Size(1253, 406);
+            this.chart2.TabIndex = 0;
+            this.chart2.Text = "chart2";
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.chart3);
+            this.tabPage4.Location = new System.Drawing.Point(4, 25);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(1253, 409);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Wykres ANW";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // chart3
+            // 
+            chartArea3.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chart3.Legends.Add(legend3);
+            this.chart3.Location = new System.Drawing.Point(-4, 0);
+            this.chart3.Name = "chart3";
+            this.chart3.Size = new System.Drawing.Size(1261, 409);
+            this.chart3.TabIndex = 0;
+            this.chart3.Text = "chart3";
             // 
             // checkBoxEilte
             // 
@@ -351,13 +416,13 @@
             this.textBoxTau.Name = "textBoxTau";
             this.textBoxTau.Size = new System.Drawing.Size(100, 22);
             this.textBoxTau.TabIndex = 23;
-            this.textBoxTau.Text = "1,7";
+            this.textBoxTau.Text = "0,5";
             // 
             // GEO
             // 
-            this.GEO.Location = new System.Drawing.Point(780, 103);
+            this.GEO.Location = new System.Drawing.Point(1039, 33);
             this.GEO.Name = "GEO";
-            this.GEO.Size = new System.Drawing.Size(241, 44);
+            this.GEO.Size = new System.Drawing.Size(115, 44);
             this.GEO.TabIndex = 24;
             this.GEO.Text = "Start GEO";
             this.GEO.UseVisualStyleBackColor = true;
@@ -371,39 +436,15 @@
             this.richTextBoxGEO.TabIndex = 25;
             this.richTextBoxGEO.Text = "";
             // 
-            // chart2
+            // ANW
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart2.Legends.Add(legend2);
-            this.chart2.Location = new System.Drawing.Point(0, 0);
-            this.chart2.Name = "chart2";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Color = System.Drawing.Color.Red;
-            series4.Legend = "Legend1";
-            series4.Name = "Fx";
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Color = System.Drawing.Color.Lime;
-            series5.Legend = "Legend1";
-            series5.Name = "FxBest";
-            this.chart2.Series.Add(series4);
-            this.chart2.Series.Add(series5);
-            this.chart2.Size = new System.Drawing.Size(984, 406);
-            this.chart2.TabIndex = 0;
-            this.chart2.Text = "chart2";
-            // 
-            // lpDataGridViewTextBoxColumn
-            // 
-            this.lpDataGridViewTextBoxColumn.DataPropertyName = "Lp";
-            this.lpDataGridViewTextBoxColumn.HeaderText = "Lp";
-            this.lpDataGridViewTextBoxColumn.Name = "lpDataGridViewTextBoxColumn";
-            // 
-            // generateTableBindingSource1
-            // 
-            this.generateTableBindingSource1.DataSource = typeof(ISAPro.GenerateTable);
+            this.ANW.Location = new System.Drawing.Point(1172, 33);
+            this.ANW.Name = "ANW";
+            this.ANW.Size = new System.Drawing.Size(115, 44);
+            this.ANW.TabIndex = 26;
+            this.ANW.Text = "Start ANW";
+            this.ANW.UseVisualStyleBackColor = true;
+            this.ANW.Click += new System.EventHandler(this.ANW_Click);
             // 
             // generateTableBindingSource
             // 
@@ -417,7 +458,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1042, 620);
+            this.ClientSize = new System.Drawing.Size(1320, 620);
+            this.Controls.Add(this.ANW);
             this.Controls.Add(this.richTextBoxGEO);
             this.Controls.Add(this.GEO);
             this.Controls.Add(this.textBoxTau);
@@ -443,13 +485,15 @@
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource1)).EndInit();
+            this.tabPage4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chart3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.generateTableBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.form1BindingSource)).EndInit();
             this.ResumeLayout(false);
@@ -494,6 +538,9 @@
         private System.Windows.Forms.RichTextBox richTextBoxGEO;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart2;
+        private System.Windows.Forms.Button ANW;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart3;
     }
 }
 
