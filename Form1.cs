@@ -20,7 +20,6 @@ namespace ISAPro
         Random random = new Random();
         public Form1()
         {
-
             InitializeComponent();
 
             genTable = new List<GenerateTable>();
@@ -28,8 +27,161 @@ namespace ISAPro
             dataGridView1.DataSource = generateTableBindingSource;
 
             ((CurrencyManager)BindingContext[genTable]).Refresh();
+        }
+
+
+        private void ANW_Click(object sender, EventArgs e)
+        {
+            //zmienne od użytkownika
+            double a = Convert.ToDouble(textBoxA.Text);
+            double b = Convert.ToDouble(textBoxB.Text);
+            double d = Convert.ToDouble(textBoxD.Text);
+            string dHelp = textBoxD.Text.Split(',').Last();
+            double l = Math.Ceiling(Math.Log(((1 / d) * (b - a) + 1), 2)); // obliczanie l czyli na ilu bitach się liczba zmiejsci
+            int T = Convert.ToInt32(textBoxT.Text);
+
+            List<double> xreal = new List<double>();
+            List<double> xrealChange = new List<double>();
+            double xrealc = 0;
+            List<double> fx = new List<double>();
+            List<double> fxc = new List<double>();
+            List<double> fxlocal = new List<double>();
+
+            double fxcc = 0;
+            List<int> xint = new List<int>();
+            //wyniki po zmianie bitu
+            List<string> xbinChange = new List<string>();
+            string xbin = "";
+            string xbinc = "";
+
+            //zmienne do zapisania najlepszych wyników
+            double xrealbest = 0;
+            double fxbest = 0;
+            string xbinbest = "";
+
+            //zmienne pętle
+            int t = 0;
+            int i = 0;
+            double w = 0.0;
+            int licznik = 0;
+            double measure = 0.0;
+            bool local = false;
+
+            ConvertFromAndToDecimal convertFromAndToDecimal = new ConvertFromAndToDecimal();
+            GEO geo = new GEO();
+
+            //test tab
+            int[] tabtest = new int[T];
+            List<double> listsumm = new List<double>();
+            int[] tabsumm = new int[T];
+
+            chart3.Titles.Clear();
+            chart3.Series["Efektywnosc"].Points.Clear();
+            chart3.Titles.Add("Efektywnosc");
+
+
+            for (int powtorz = 0; powtorz < 1000; powtorz++)                
+            {
+                
+                for (t = 0; t < T; t++)
+                {
+                    xreal = InitPopulation(a, b, 1);
+                    local = false;
+                    licznik = 0;
+                    while (!local)
+                    {
+                        fxc = CalculateFunction(xreal);
+                        xint = FromXrealToXint(xreal, a, b, l);
+                        xbin = convertFromAndToDecimal.intToBinarty(xint[0], l);
+
+                        //zmiana bitów
+                        xbinChange.Clear();
+                        for (i = 0; i < xbin.Length; i++)
+                        {
+                            xbinChange.Add(geo.changeBit(xbin, i));
+                        }
+
+                        //zmina z xbin -> xint aby wyznaczyć wartości funkcji
+                        xint.Clear();
+                        foreach (var item in xbinChange)    // wygenerowanie xint (xbin -> xint)
+                        {
+                            xint.Add(convertFromAndToDecimal.convertFrom(item, 2));
+                        }
+
+                        xrealChange = FromXintToXreal(xint, a, b, l); //wygenerowanie z xint do xreal
+
+                        //obliczanie funkji 
+                        fx = CalculateFunction(xrealChange);
+
+                        i = 0;
+                        //obliczanie na którym elemencie jest najlepsze fx
+                        foreach (var os in fx)
+                        {
+                            if (os == fx.Max())
+                            {
+                                break;
+                            }
+                            i++;
+                        }
+
+                        //sprawdzanie warunku stopu
+                        if (fxc[0] < fx.Max())
+                        {
+                            xreal[0] = xrealChange[i];
+                            fxc[0] = fx.Max();
+
+
+                            xrealc = xrealChange[i];
+                            fxcc = fx.Max();
+                            xbinc = xbinChange[i];
+
+                        }
+                        else
+                        {
+                            local = true;
+                        }
+
+                    }
+
+
+                    if (fxbest < fxcc)
+                    {
+                        xrealbest = xrealc;
+                        fxbest = fxcc;
+                        xbinbest = xbinc;
+                    }
+
+                    if (fxcc >= 1.9)
+                    {
+                        //znaleziono rozwiązanie w T == t
+                        tabtest[t]++;
+                        break;
+                    }
+
+                }
+
+                //wypisywanie na okienko
+                richTextBoxGEO.Text = "ANW Najlepszy wynik: \nxreal: " + xrealbest + " \nxbin: " + xbinbest + " \nfx: " + fxbest;
+            }
+
+            int sum = 0;
+            double wynik = 0;
+            foreach(var item in tabtest)
+            {
+                sum = sum + item;
+                wynik = (double)sum / (double)T;
+                listsumm.Add(wynik);
+            }
+            i = 0;
+            foreach(var item in listsumm)
+            {
+                i++;
+                chart3.Series["Efektywnosc"].Points.AddXY(i, item*10);
+            }
+            
 
         }
+        
 
         private void GEO_Click(object sender, EventArgs e)
         {
@@ -145,7 +297,7 @@ namespace ISAPro
             } while (T > 0);
 
 
-            richTextBoxGEO.Text = "Najlepszy wynik: \nxreal: " + xrealbest + " \nxbin: " + xbinbest + " \nfx: " + fxbest;
+            richTextBoxGEO.Text = "GEO Najlepszy wynik: \nxreal: " + xrealbest + " \nxbin: " + xbinbest + " \nfx: " + fxbest;
         }
 
 

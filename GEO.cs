@@ -92,5 +92,18 @@ namespace ISAPro
                 file.WriteLine("Pokolenie: " + pokolenie + "\t\t xrealbest: " + xrealbest + "\t\t xrealbinbest: " + xrealbinbest + "\t\t fxbest: " + fxbest);
             }
         }
+        //Generowanie pliku
+        public void generateFileANW(string fileName, double xreal, string xrealbin, double fx, int iteracja, int T)
+        {
+
+            string pathString = Path.Combine("", fileName);
+
+
+            using (StreamWriter file = new StreamWriter(pathString, true))
+            {
+                file.WriteLine("T = " + T);
+                file.WriteLine("Iteracja: " + iteracja + "\t\t xreal: " + xreal + "\t\t xrealbin: " + xrealbin + "\t\t fx: " + fx);
+            }
+        }
     }
 }
