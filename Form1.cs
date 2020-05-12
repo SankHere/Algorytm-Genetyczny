@@ -29,7 +29,180 @@ namespace ISAPro
             ((CurrencyManager)BindingContext[genTable]).Refresh();
         }
 
-     
+        private void RC_Click(object sender, EventArgs e)
+        {
+            //zmienne od użytkownika
+            double a = Convert.ToDouble(textBoxA.Text);
+            double b = Convert.ToDouble(textBoxB.Text);
+            double d = Convert.ToDouble(textBoxD.Text);
+            string dHelp = textBoxD.Text.Split(',').Last();
+            double l = Math.Ceiling(Math.Log(((1 / d) * (b - a) + 1), 2)); // obliczanie l czyli na ilu bitach się liczba zmiejsci
+            int T = Convert.ToInt32(textBoxT.Text);
+            double n = Convert.ToDouble(textBoxN.Text);
+
+            double c1 = Convert.ToDouble(textBoxC1.Text);
+            double c2 = Convert.ToDouble(textBoxC2.Text);
+            double c3 = Convert.ToDouble(textBoxC3.Text);
+            double rs = Convert.ToDouble(textBoxRS.Text);//zares obrzeża
+
+            List<double> xreal = new List<double>();
+            List<Molecule> molecules = new List<Molecule>();
+            List<double> bgMolecule = new List<double>(); //najlepsze wartosci czasteczek w obrzeżu 
+
+            List<double> fx = new List<double>();
+            List<double> fxbgMolecule = new List<double>();
+
+            List<double> fxMolecule = new List<double>();
+            List<double> randomNumber = new List<double>();
+            double maxfxbgMolecule = 0;
+            //zmienne do petli
+            int t = 0;
+            int i = 0;
+            int k = 0;
+            //dla kolejnej czasteczki
+            double Vt = 0;
+            double Xt = 0;
+            double Fxt = 0;
+
+            string fileName = "";
+
+            List<double> FxAllT = new List<double>();
+            double FxMax;
+            double FxAVG;
+            double FxMin;
+
+            double xrealbest = 0;
+            double fxbest = 0;
+
+            SwarmMolecule swarmMolecule = new SwarmMolecule();
+
+            chart4.Titles.Clear();
+            chart4.Series["FxMax"].Points.Clear();
+            chart4.Series["FxAVG"].Points.Clear();
+            chart4.Series["FxMin"].Points.Clear();
+            chart4.Titles.Add("Historia");
+
+            chart5.Titles.Clear();
+            chart5.Series["X"].Points.Clear();
+            //chart5.Series["X"].Points.AddXY(0, -4);
+            //chart5.Series["X"].Points.AddXY(0, 4);
+            chart5.ChartAreas[0].AxisY.Minimum = -2;
+            chart5.ChartAreas[0].AxisY.Maximum = 2;
+            chart5.ChartAreas[0].AxisY.Interval = 0.5;
+
+            chart5.ChartAreas[0].AxisX.Minimum = -4;
+            chart5.ChartAreas[0].AxisX.Maximum = 12;
+            chart5.ChartAreas[0].AxisY.Interval = 1;
+            //incjacja czasteczek
+            xreal = InitPopulation(a, b, n); //wygenerowanie populacji xReal
+            fx = CalculateFunction(xreal); //oblicznie wartosci funkcji
+
+            bgMolecule.Clear();
+            molecules.Clear();
+            foreach (var item in xreal)
+            {
+                bgMolecule = swarmMolecule.initBgmolecule(item, xreal, fx, rs);
+                fxbgMolecule = CalculateFunction(bgMolecule);
+
+                maxfxbgMolecule = fxbgMolecule.Max();
+
+                foreach(var item2 in fxbgMolecule)
+                {
+                    if(item2 == maxfxbgMolecule)
+                    {
+                        break;
+                    }
+                    k++;
+                }
+
+                molecules.Add(new Molecule(item, swarmMolecule.initVmolecule(a, b), fx[i], item, bgMolecule[k]));
+                i++;
+                k = 0;
+            }
+            for (t = 0; t < T; t++)
+            {
+                //Oblicz wartość funkcji celu: f(xi)
+                foreach (var item in molecules)
+                {
+                    //IF (f(xi)>f(bi)) THEN bi=xi
+                    if (CalculateFunctionX(item.X) > CalculateFunctionX(item.B))
+                    {
+                        item.B = item.X;
+                    }
+                    //IF(f(xi) > f(bg) THEN bg = xi
+                    if (CalculateFunctionX(item.X) > CalculateFunctionX(item.Bg))
+                    {
+                        item.Bg = item.X;
+                    }
+                }
+
+                foreach(var item in molecules)
+                {
+                    //losowanie 3 liczb z przedziału (0-1)
+                    randomNumber = RandomNumber(3);
+                    Vt = (c1 * randomNumber[0] * item.V) + (c2 * randomNumber[1] * (item.B - item.X)) + (c3 * randomNumber[2] * (item.Bg - item.X));
+                    item.V = Vt;
+                    Xt = item.X + Vt;
+                    //zabezpieczenie bo może wyjść poza zakres
+                    if(Xt > b)
+                    {
+                        Xt = b;
+                    }
+                    if (Xt < a)
+                    {
+                        Xt = a;
+                    }
+                    item.X = Xt;
+                    Fxt = CalculateFunctionX(Xt);
+                    item.Fx = Fxt;
+                }
+
+                FxAllT.Clear();
+                foreach (var item in molecules)
+                {
+                    if (item.Fx > fxbest)
+                    {
+                        xrealbest = item.X;
+                        fxbest = item.Fx;
+                    }
+
+                    FxAllT.Add(item.Fx);
+                    
+                }
+
+                
+                chart4.Series["FxMax"].Points.AddXY(t + 1, FxAllT.Max());
+                chart4.Series["FxAVG"].Points.AddXY(t + 1, FxAllT.Average());
+                chart4.Series["FxMin"].Points.AddXY(t + 1, FxAllT.Min());
+
+                foreach(var item in molecules)
+                {
+                    chart5.Series["X"].Points.AddXY(item.X, 0);
+                }
+
+                fileName = t.ToString() + ".Jpeg";
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                this.chart5.SaveImage(fileName, System.Windows.Forms.DataVisualization.Charting.ChartImageFormat.Jpeg);
+
+                chart5.Series["X"].Points.Clear();
+            }
+
+
+            //wypisywanie na okienko
+            richTextBox.Text = "RC Najlepszy wynik: \nxreal: " + xrealbest + " \nfx: " + fxbest;
+
+           
+            for (i = 0; i < T; i++)
+            {
+                
+                Image image = Image.FromFile(@"" + i.ToString() + ".Jpeg");
+                pictureBox2.Image = new Bitmap(image);
+                pictureBox2.Refresh();           
+                Thread.Sleep(50);
+            }
+
+        }
 
 
         private void ANW_Click(object sender, EventArgs e)
@@ -173,7 +346,7 @@ namespace ISAPro
 
 
             //wypisywanie na okienko
-            richTextBoxGEO.Text = "ANW Najlepszy wynik: \nxreal: " + xrealbest + " \nxbin: " + xbinbest + " \nfx: " + fxbest;
+            richTextBox.Text = "ANW Najlepszy wynik: \nxreal: " + xrealbest + " \nxbin: " + xbinbest + " \nfx: " + fxbest;
 
          }
 
@@ -293,7 +466,7 @@ namespace ISAPro
             } while (T > 0);
 
 
-            richTextBoxGEO.Text = "GEO Najlepszy wynik: \nxreal: " + xrealbest + " \nxbin: " + xbinbest + " \nfx: " + fxbest;
+            richTextBox.Text = "GEO Najlepszy wynik: \nxreal: " + xrealbest + " \nxbin: " + xbinbest + " \nfx: " + fxbest;
         }
 
 
@@ -640,7 +813,7 @@ namespace ISAPro
             return randomList;
         }
 
-        //obliczanie fx
+        //obliczanie fx listy
         private List<double> CalculateFunction(List<double> xreal1)
         {
             List<double> fx = new List<double>();
@@ -652,6 +825,15 @@ namespace ISAPro
             }
 
             return fx;
+        }
+        //obliczanie fx jednego x
+        private double CalculateFunctionX(double x)
+        {
+            double function = 0;
+
+            function = (x - (int)x) * (Math.Cos(20 * Math.PI * x) - Math.Sin(x));
+
+            return function;
         }
 
         private List<int> FromXrealToXint(List<double> xreal, double a, double b, double l)

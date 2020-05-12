@@ -58,8 +58,10 @@
     <Compile Include="GEO.cs" />
     <Compile Include="Lab3.cs" />
     <Compile Include="Lab4.cs" />
+    <Compile Include="Molecule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SwarmMolecule.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
